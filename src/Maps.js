@@ -1,32 +1,31 @@
-import React, { useEffect } from 'react'
-import L from "leaflet"
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
-
-export default function Maps() {
-    useEffect(() => {
-        var mymap = L.map("mapid").setView(
-            [54.90406635640633, 23.95781618497057],
-            13
-        );
-        mymap.invalidateSize()
-        L.tileLayer(
-            "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw",
-            {
-                maxZoom: 18,
-                attribution:
-                    'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
-                    'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                id: "mapbox/streets-v11",
-                tileSize: 512,
-                zoomOffset: -1,
-            }
-        ).addTo(mymap);
-        var marker = L.marker([54.90406635640633, 23.95781618497057]).addTo(mymap);
-        marker.bindPopup("<b>Informatikos fakultetas</b><br>11 Rumai.").openPopup();
-    }, [])
-    return (
-        <div>
-            <div id="mapid"></div>
-        </div>
-    )
+import React, { useEffect } from "react";
+import * as L from "leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import Geocode from "react-geocode";
+export default function Maps(props) {
+  const position = [
+    props.geo != null ? props.geo.results[0].geometry.lat : 54.90406635640633,
+    props.geo != null ? props.geo.results[0].geometry.lng : 23.95781618497057,
+  ];
+  return (
+    <div>
+      {/* <div id="mapid"></div> */}
+      <MapContainer center={position} zoom={13}>
+        <TileLayer
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Marker position={position}>
+          {props.model != null ? (
+            <Popup style={{ width: "600px" }}>
+              <h2>{props.city}</h2>
+              <p> Weather: {props.model.weather.map((i) => i.main)}</p>
+              <p> Temperature: {Math.round(props.model.main.temp - 273)}</p>
+              <p>Feels Like: {Math.round(props.model.main.feels_like - 273)}</p>
+            </Popup>
+          ) : null}
+        </Marker>
+      </MapContainer>
+    </div>
+  );
 }
