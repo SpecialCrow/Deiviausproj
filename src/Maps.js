@@ -4,8 +4,12 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import Geocode from "react-geocode";
 export default function Maps(props) {
   const position = [
-    props.geo != null ? props.geo.results[0].geometry.lat : 54.90406635640633,
-    props.geo != null ? props.geo.results[0].geometry.lng : 23.95781618497057,
+    props.geo != null && props.model != null && props.model.cod != "404"
+      ? props.geo.results[0].geometry.lat
+      : 54.90406635640633,
+    props.geo != null && props.model != null && props.model.cod != "404"
+      ? props.geo.results[0].geometry.lng
+      : 23.95781618497057,
   ];
   return (
     <div>
@@ -16,7 +20,7 @@ export default function Maps(props) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <Marker position={position}>
-          {props.model != null ? (
+          {props.model != null && props.model.cod != "404" ? (
             <Popup style={{ width: "600px" }}>
               <h2>{props.city}</h2>
               <p> Weather: {props.model.weather.map((i) => i.main)}</p>
